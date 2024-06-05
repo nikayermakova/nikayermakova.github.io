@@ -1,0 +1,574 @@
+---
+title: "The Paradoxical Relationship Between Food Insecurity and Obesity"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+    theme: journal
+    highlight: tango
+always_allow_html: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# install.packages("devtools")
+devtools::install_github("lbusett/insert_table")
+if (!require(knitr, quietly = TRUE)) {
+  install.packages("knitr")
+}
+if (!require(kableExtra, quietly = TRUE)) {
+  install.packages("kableExtra")
+}
+
+library(knitr)
+library(kableExtra)
+```
+
+## Report Info
+
+Sophia Harris, Sam McFarland, Esal Shakil, and Nika Yermakova
+
+Department of Mathematics, Seattle Pacific University
+
+DAT 4500: Data and Society
+
+Dr. Brian Gill
+
+June 4th, 2024
+
+## Abstract
+
+
+
+## Introduction
+
+Imagine living in a community where grocery stores are scarce, fresh produce is a luxury, and affordable food options are limited to nutrient-poor choices. Now, consider the paradox: despite the lack of food security, obesity rates are soaring. When people think of food insecurity, they imagine a scenario where individuals are lacking access to proper nutrition, so how is this “lacking of food” leading to an excess of weight? This counter intuitive phenomenon poses a critical question—how can food insecurity coexist with obesity, and what underlying factors contribute to this complex relationship?
+
+Previous research has highlighted an association between obesity rates and food insecurity. However, it has also been identified that this relationship is not straightforward, but a multifaceted issue influenced by numerous factors. While traditional perceptions might suggest that limited access to food would result in decreased calorie intake and subsequently lower rates of obesity, the reality is far more intricate. Factors such as race, education levels, socioeconomic status, and all play pivotal roles in shaping dietary behaviors and health outcomes within communities experiencing food insecurity. Understanding these factors is important for developing effective interventions and policies to address the relationship between food insecurity and obesity.
+
+### The Urban Institute Report
+
+This study was heavily inspired by a report published by the Urban Institute, where they conducted a cluster analysis examining food insecurity and other related factors across counties. The purpose of their study was to disrupt food insecurity by investigating data to identify strategies that tackle the root causes of economic distress and food insecurity. Their report emphasized that solving systemic food insecurity requires more than just providing food; it involves addressing interrelated factors such as housing affordability, employment, financial health, physical health, and geographic barriers. This comprehensive approach aims to provide communities with data to understand their unique challenges and develop tailored strategies.
+
+We decided to extend the Urban Institute's analysis by including another variable: obesity. We were curious if food insecurity could coexist with obesity and if so, what underlying factors contribute to this relationship. By adding obesity to the cluster analysis, we aimed to deepen the understanding of the complexities and interdependencies between food insecurity and obesity, building on the insights provided by the Urban Institute's study.
+
+### Food Insecurity
+
+Food insecurity, as defined by Anderson (1990), encompasses limited or uncertain access to nutritionally adequate and safe foods, or the inability to acquire acceptable foods in socially acceptable ways. Frongillo & Bernal (2014) note that hunger and malnutrition are common experiences associated with food insecurity. In 2022, the USDA  reported that 12.8 percent (17.0 million) of U.S. households experienced food insecurity at some point during the year, reflecting the importance of addressing this issue.
+
+Contrary to popular belief, Franklin et al. (2012) emphasize that food insecurity extends beyond mere hunger, focusing also on the quality and adequacy of the diet. Food insecurity is linked to low food expenditures, low fruit and vegetable consumption, and lower-quality diets, all of which can significantly affect health outcomes. Notably, food insecurity without hunger was found to be associated with being overweight among individuals. This suggests that this issue is not just about addressing hunger but also about promoting healthier dietary patterns and weight outcomes (Drewnowski & Specter, 2004).
+
+### Obesity
+
+The World Health Organization defines obesity as a chronic complex disease characterized by excessive fat deposits that can impair health. Nationally, 41.9 percent of adults have obesity, according to the TFAH (2023). This statistic is alarming because obesity is not merely a cosmetic concern, but it is associated with serious health implications. Individuals with obesity face an increased risk of various chronic diseases, including type 2 diabetes, cardiovascular diseases, hypertension, and certain cancers. Additionally, obesity can adversely affect bone health, reproduction, and overall quality of life, impacting everyday activities such as sleeping or moving (Drewnowski & Specter, 2004; Franklin et al., 2012; World Health Organization; Waidmann et al., 2022). Furthermore, obesity follows a socioeconomic gradient, disproportionately affecting individuals with limited resources, racial-ethnic minorities, and those living in poverty (Drewnowski & Specter, 2004; Burns, 2004). This disparity is concerning and follows a similar trajectory reflected in food insecurity.
+
+### Current Study
+
+As mentioned previously, we wanted to expand upon the Urban Institute Report. We will be doing so through three main objectives. First, we aim to determine if there is a correlation between food insecurity and obesity. Second, we will conduct a k-means cluster analysis that integrates obesity and food insecurity data with socioeconomic, health, and demographic variables to detect emerging patterns. Third, we will perform a set of moderation analyses to identify if variables such as race, education, income, and geographic location (urban vs. rural areas) moderate the relationship between food insecurity and obesity. Ultimately, we seek to paint a clearer picture of how food insecurity and obesity are intertwined and identify strategies to break this cycle.
+
+We predict a positive and statistically significant correlation between food insecurity and obesity rates. Regarding the cluster analysis, we expect greater food insecurity and obesity vulnerability in more rural areas, as well as in areas with a higher population of people of color, lower education levels, and lower income. Furthermore, we predict that the moderation analysis will indicate that income levels, race, education, and geographic location will all play a statistically significant role in moderating the relationship between food insecurity and obesity.
+
+## Methods and Datasets
+
+### [Food Insecurity Data](https://apps.urban.org/features/disrupting-food-insecurity/index.html) 
+
+Since we took inspiration from the Urban Institute report, we utilized the data they posted on their GitHub for the food insecurity variable, along with other relevant factors. Their study focused on individuals and households in the United States experiencing food insecurity, considering factors such as income, employment, health, housing costs, and demographic characteristics. They used a total of 27 metrics, covering seven broad categories: food insecurity, physical health, housing and transportation costs, income and employment, financial health, demographics, and geography. Most of the metrics were recorded as proportions, with some exceptions, such as median income or credit scores. However, only 19 of the 27 metrics was used to create the county peer groups for their analysis. So, for our cluster analysis, we using only those 19 variables.
+
+When it comes to the data collection process, the report utilized various data sets spanning from 2010 to 2018. Because of this, it is difficult to pinpoint what exact data collection procedures were implemented. However, here are the following sources that they used to create their data set:
+
+- Credit Bureau Data (2017): Median credit score, Debt in collections, Medical debt in collections, Average unsecured debt
+- US Census Bureau’s Decennial Census and American Community Survey (ACS) (2016 or 2012–16): Median household income, Below 200% of federal poverty level, Unemployment rate, Income inequality, Households with children, Households with seniors (65+), People of color, Black, non-Hispanic, Hispanic, Asian or Pacific Islander, Native American, Another race or multiracial, non-Hispanic, White, non-Hispanic, No college degree, Immigrants, Total population
+- County Health Rankings (CHR): Low-birthweight births, People with diabetes, People with disability, No health insurance, Premature deaths per 100,000 people
+- Feeding America (2016 and 2017): Food insecure, all people, Food insecure, children, Limited access to healthy food, Households receiving SNAP, Households receiving SNAP or cash assistance
+- National Low Income Housing Coalition (NLIHC) (2018): Wage to afford fair market rent
+- Center for Neighborhood Technology (CNT) (2017): Transportation costs as percent of income
+- Bureau of Labor Statistics (BLS) (2016): Local Area Unemployment Statistics annual-average estimates, Current Population Survey annual-average estimates
+- CDC National Vital Statistics System (2010–16): Low-birth weight births data
+- CDC Diabetes Interactive Atlas (2014): People with diabetes data
+- CDC WONDER (2014–16): Premature deaths per 100,000 people data
+- USDA Food Environment Atlas (2015): Limited access to healthy food data
+
+In terms of statistical analysis, the Urban Institute conducted a hierarchical clustering analysis using Ward’s method and a Euclidean distance measure. Their process involved standardizing the 27 metrics across seven broad categories to a comparable scale of 0–100 and normalizing some variables to mitigate the influence of outliers. They analytically down-weighted highly correlated metrics to reduce undue influence and up-weighted key metrics such as food insecurity rates, housing-cost burdens, and rural population share to enhance their impact. Stability analyses were performed to adjust metric weights, ensuring robust group separation and cohesion, as measured by silhouette scores, ultimately defining 10 peer groups.
+
+### [Obesity Data](https://www.countyhealthrankings.org/health-data/health-factors/health-behaviors/diet-and-exercise/adult-obesity?year=2016&amp;tab=0&amp;state=53) 
+
+While we were interested in somewhat replicating the study done by Urban Institute (2019), we wanted to obesity into our analysis.To examine the relationship between food insecurity and obesity, we needed relevant obesity data. We obtained this data from the Behavioral Risk Factor Surveillance System (BRFSS), published by the Centers for Disease Control and Prevention (CDC). Since they had data spanning across a multitude of years, we decided to utilize data from the 2016 as it aligned best with our food insecurity data.
+
+The data set included our main variable of interest—adult obesity. The CDC (2022) defines adult obesity as the percentage of the adult population (ages 18 and older) with a Body Mass Index (BMI) of 30 kg/m² or higher. BMI is calculated using self-reported height and weight with the formula: BMI = weight (kg) / (height (m))². Importantly, the estimates for adult obesity are age-adjusted to the 2000 U.S. standard population to ensure fair comparisons across regions with different age distributions.
+  
+The BRFSS employed Random Digit Dialing (RDD) to randomly select participants, generating phone numbers to reach a diverse and representative sample. Surveys were conducted via telephone, targeting both land-line and cellphone users to ensure broad coverage. Data was collected across all states, the District of Columbia, and U.S. territories, focusing on non-institutionalized adults aged 18 and older, living in households with either land-line telephones or cellphones. Trained interviewers conducted the surveys, asking respondents a standardized set of questions, including self-reported height and weight to calculate BMI.
+  
+The RDD method guarantees that each adult in the target population has a known, non-zero chance of being selected, making the sample random and representative. With over 400,000 respondents annually since 2011, the large sample size enhances the reliability and generalization of the findings. Data was weighted using Iterative Proportional Fitting (Raking) to adjust for demographic discrepancies and better reflect the population distributions of each state. This ensures the survey sample matches the population in terms of age, sex, race, and other demographics.
+  
+Additionally, the BRFSS utilized a multilevel regression and post-stratification (MRP) approach to produce stable estimates, especially for small populations or areas with limited data. Internal and external validation studies confirmed strong consistency between model-based estimates and direct survey estimates. This rigorous methodology further strengthened the reliability of the obesity data used in our analysis.
+  
+### Data Combination
+
+After obtaining both data sets, we combined them into a single data frame for our statistical analyses and visualizations. Our final data frame included 20 different variables, with food insecurity and obesity as our primary variables of focus. The remaining variables were used as contributing factors of interest. The variables utilized in our study and their corresponding definitions are as follows:
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+
+# Create a data frame with the variables and their definitions
+variables <- data.frame(
+  Variable = c(
+    "Below 200% of federal poverty level", "Debt in collections", "Food insecure, all people",
+    "Food insecure, children", "Households with children", "Households with seniors",
+    "Housing-cost burdened", "Low-birthweight births", "Median credit score",
+    "Median household income", "No college degree", "No health insurance",
+    "Obesity", "People of color", "People with diabetes",
+    "People with disability", "Population in rural area", "Severely housing-cost burdened",
+    "Unemployment rate", "Wage to afford fair market rent"
+  ),
+  Definition = c(
+    "Share of people with incomes below 200 percent of the federal poverty threshold.",
+    "Share of people with a credit record who have debt in collections (i.e., severely delinquent debt).",
+    "Share of people living in households that experienced food insecurity in the past 12 months.",
+    "Share of children living in households that experienced food insecurity in the past 12 months.",
+    "Share of households with any children younger than age 18.",
+    "Share of households with a member age 65 or older.",
+    "Share of households (renters and owners) that spend 30 percent or more of their incomes on housing and utility costs.",
+    "Share of live births with birthweight below 2.5 kilograms (5.5 pounds).",
+    "Median VantageScore credit score ranging from 300 to 850 among those with a credit record. Subprime scores range from 300 to 600, near-prime from 601 to 660, and prime or more from 661 to 850.",
+    "Median household income.",
+    "Share of people ages 25 or older with no college degree (includes associate’s degrees, bachelor’s degrees, and graduate degrees).",
+    "Share of people enrolled in neither a private nor public health insurance plan.",
+    "A chronic complex disease characterized by excessive fat deposits that can impair health.",
+    "Share of people who report being Hispanic or non-Hispanic and one of the following races: Black, Asian or Pacific Islander, American Indian or Alaska Native, another race, or multiracial.",
+    "Share of adults age 20 and older with diagnosed diabetes.",
+    "Share of people with at least one disability.",
+    "Share of the population living in rural areas.",
+    "Share of households (renters and owners) that spend 50 percent or more of their incomes on housing and utility costs.",
+    "Share of people in the labor force who are not employed.",
+    "Hourly wage a person working full time, full year needs to make so he or she spends no more than 30 percent of income on rent at HUD’s prevailing fair market rent for a two-bedroom apartment."
+  )
+)
+
+# Print the data frame as a nicely formatted table
+kable(variables, "html") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+```
+
+### Statistical Procedures
+
+All statistical analyses were conducted through RStudio. Descriptive statistics were taken for all variables. The combined data frame underwent a correlation analysis between food insecurity and obesity. We also conducted a k-means cluster analysis, while utilizing the elbow method to determine the optimal number of clusters needed. Lastly, a moderation analysis was conducted for four variables: people of color, less than college education, median income, and rural population. This statistical analysis revealed whether the relationship between food insecurity and obesity is moderated by any of the mentioned variables. 
+
+## Results
+
+### Descriptives
+
+Means, standard deviations, and correlations are presented in the table below.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(openintro)
+library(readr)
+library(stringr)
+library(dplyr)
+library(stringdist)
+library(usmap)
+library(openxlsx)
+library(plotly)
+library(ggplot2)
+library(psych)
+library(readxl)
+
+# loading in data
+final_data <- read_excel("final_data.xlsx")
+
+# descriptive stats
+descriptives <- describe(final_data)
+
+descriptives_table <- descriptives %>%
+  as.data.frame() %>%
+  kable("html", caption = "Descriptive Statistics of All the Variables") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+                full_width = FALSE,
+                position = "left")
+
+# Display the table
+descriptives_table
+```
+
+### Correlations
+
+A Pearson product-moment correlation coefficient was computed to assess the relationship between food insecurity and obesity. The correlation coefficient (r = 0.44) indicated that there is a moderate positive linear relationship between food insecurity rates and obesity rates. This means that as food insecurity rates increase, obesity rates tend to increase as well. The t-value of 27.49, along with the very small p-value (< 2.2e-16) reflect that the correlation is statistically significant. 
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# running correlation analysis
+cor.test(final_data$food_insecurity_rate, final_data$obesity_rate)
+```
+Here is a graph to visualize this correlation analysis!
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# creating a mapping of states to regions
+state_region_mapping <- data.frame(
+  state = c(
+    "AL", "AK", "AZ", "AR", "CA", 
+    "CO", "CT", "DE", "FL", "GA",
+    "HI", "ID", "IL", "IN", "IA", 
+    "KS", "KY", "LA", "ME", "MD",
+    "MA", "MI", "MN", "MS", "MO", 
+    "MT", "NE", "NV", "NH", "NJ",
+    "NM", "NY", "NC", "ND", "OH", 
+    "OK", "OR", "PA", "RI", "SC",
+    "SD", "TN", "TX", "UT", "VT", 
+    "VA", "WA", "WV", "WI", "WY", "DC"
+  ),
+  region = c(
+    "South", "West", "West", "South", "West", 
+    "West", "Northeast", "South", "South", "South", 
+    "West", "West", "Midwest", "Midwest", "Midwest", 
+    "Midwest", "South", "South", "Northeast", "South", 
+    "Northeast", "Midwest", "Midwest", "South", "Midwest",
+    "West", "Midwest", "West", "Northeast", "Northeast", 
+    "West", "Northeast", "South", "Midwest", "Midwest", 
+    "South", "West", "Northeast", "Northeast", "South", 
+    "Midwest", "South", "South", "West", "Northeast", 
+    "South","West", "South", "Midwest", "West", "South"
+  )
+)
+
+# joining regions with final data
+final_data_region <- left_join(final_data, state_region_mapping, by = c("abbr" = "state"))
+
+# creating static map
+corr_graph <- ggplot(data = final_data_region, aes(x = food_insecurity_rate, y = obesity_rate, text = paste(geographic_area))) +
+  geom_jitter(aes(colour = region), width = 1.5, height = 2, alpha = 0.7) +
+  geom_abline(intercept = coef(lm(obesity_rate ~ food_insecurity_rate, data = final_data_region))[1], 
+              slope = coef(lm(obesity_rate ~ food_insecurity_rate, data = final_data_region))[2], 
+              color = "#D55E00", size = 1) +
+  labs(
+    title = "Relationship Between \nFood Insecurity and Obesity",
+    x = "Food Insecurity Rate (%)",
+    y = "Obesity Rate (%)",
+    color='Region'
+  ) +
+  theme_classic() +  
+  theme(
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+    axis.title = element_text(size = 14),
+    axis.text = element_text(size = 12)
+  )
+
+# making it interactive
+corr_plotly <- ggplotly(corr_graph, tooltip = "text") %>%
+  add_lines(
+    x = ~food_insecurity_rate, 
+    y = ~predict(lm(obesity_rate ~ food_insecurity_rate, data = final_data_region)), 
+    line = list(color = "#D55E00", width = 1),
+    name = "Regression"
+  )
+
+# disaplaying the graph
+corr_plotly
+```
+
+### K-means Cluster Analysis
+
+The data set was then subjected to a k-means clustering method to identify distinct groups within the sample based on our twenty variables. Before conducting the analysis we had standardize the data set to make the clustering more accurate. WE also had to remove 405 out of 3135 observations because of missing values within the data set. To determine the optimal number of clusters, we utilized the elbow method. Ultimately, five clusters were determined to be most appropriate for this data set. here are the characterizations for each of our clusters. 
+	
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Load necessary library
+library(knitr)
+
+# Create the data frame
+cluster_data <- data.frame(
+  Cluster = c(1, 2, 3, 4, 5),
+  Counties = c(369, 873, 305, 891, 475),
+  `Food Insecurity` = c("Very high", "Moderately high", "Very low", "Low", "Moderate"),
+  Obesity = c("Very high", "Moderately high", "Very low", "Moderate", "Moderate"),
+  `Other Characterizations` = c(
+    "The poorest, most people of color, least educated.",
+    "Poor, oldest, most disability, very rural, whiter population.",
+    "Very rich, urban, educated, and the youngest",
+    "Comfortable economically, less urban, very white.",
+    "Urban, middle class."
+  )
+)
+
+# Display the table
+kable(cluster_data, caption = "Cluster Characterizations",
+      align = "c", col.names = c("Cluster", "Counties", "Food Insecurity", "Obesity", "Other Characterizations")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+                full_width = FALSE,
+                position = "left")
+```
+	
+Here is a cluster map that was inspired by the Urban Institute, utilizing our data on food insecurity, obesity, and other factors. 
+
+```{r, echo=FALSE, warning=FALSE, message = FALSE}
+library(readxl)
+library(dplyr)
+library(usmap)
+library(openxlsx)
+library(ggplot2)
+library(ggfortify)
+library(factoextra)
+library(plotly)
+library(stringr)
+
+# loading in data
+final_data <- read_excel("final_data.xlsx")
+
+# removing some unnecessary variables in data
+final_data <- final_data |> select(-geographic_area, -abbr)
+
+# getting numeric data separately
+numeric_vars <- sapply(final_data, is.numeric)
+numeric_data <- final_data[, numeric_vars]
+non_numeric_data <- final_data[, !numeric_vars]
+
+# standardizing numeric variables
+scaled_numeric_data <- scale(numeric_data)
+
+# converting scaled numeric data back to data frame
+scaled_numeric_df <- as.data.frame(scaled_numeric_data)
+names(scaled_numeric_df) <- names(numeric_data)
+
+# combining scaled numeric data with non-numeric data
+scaled_data <- cbind(non_numeric_data, scaled_numeric_df)
+
+# Removing NA from original data
+scaled_data <- na.omit(scaled_data)
+
+# Getting only numeric data
+numeric_data <- select(scaled_data, -state, -county)
+
+# Finding the perfect amount of clusters
+elbow_plot <- fviz_nbclust(numeric_data, kmeans, method = "wss") +
+  labs(subtitle = "Elbow method")
+#print(elbow_plot)
+
+# Applying kmeans clustering with 5 clusters
+set.seed(123)
+km.res <- kmeans(numeric_data, 5, nstart = 25)
+
+# Calculating cluster means for each variable
+cluster_means <- aggregate(numeric_data, by = list(cluster = km.res$cluster), mean)
+
+# Merging cluster assignments with county names
+cluster_assignments_df <- data.frame(county = scaled_data$county, cluster = km.res$cluster)
+
+# Combining cluster assignments with original data
+final_data_with_clusters <- cbind(scaled_data, cluster = km.res$cluster)
+
+# Create the labels for each peer group
+pg_names <- tibble(
+  pg_number = as.character(seq(1, 5)),
+  pg_names = c("Very high obesity and food insecurity",
+               "Moderately high obesity and food insecurity",
+               "Very low obesity and food insecurity",
+               "Moderate obesity, low food insecurity",
+               "Moderate obesity and food insecurity")
+)
+
+# Assigning colors to peer groups
+pg_colors <- c("#FF0000", "#FFA500", "#D2691E", "#FFFF00", "#0000FF")
+
+# Convert cluster to character
+final_data_with_clusters$cluster <- as.character(final_data_with_clusters$cluster)
+
+# Assigning peer groups to their corresponding labels
+cluster_data <- left_join(final_data_with_clusters, pg_names, by = c("cluster" = "pg_number"))
+
+# Join data with geometries 
+us_counties <- us_map(regions = "counties")
+data_joined_g_county <- left_join(us_counties, cluster_data, by = c("county" = "county", "full" = "state"))
+
+# Reorder levels of Peer Group variable based on desired order
+data_joined_g_county$pg_names <- factor(data_joined_g_county$pg_names, levels = c("Very high obesity and food insecurity",
+                                                                                  "Moderately high obesity and food insecurity",
+                                                                                  "Moderate obesity and food insecurity",
+                                                                                  "Moderate obesity, low food insecurity",
+                                                                                  "Very low obesity and food insecurity"))
+# renaming cluster names
+data_joined_g_county <- data_joined_g_county |>
+  rename(`Peer Group` = pg_names)
+
+# Create visualization
+data_joined_g_county <- data_joined_g_county |>
+  mutate(tooltip_text = str_c(full  , "\n", county, "\n", `Peer Group`)) # Add more tooltip info here
+
+m <- ggplot() +
+  geom_sf(data = data_joined_g_county, aes(text = tooltip_text, fill = `Peer Group`, color = fips), size = 0.05) +
+  scale_fill_manual(values = pg_colors, 
+                    labels = c("Very high obesity and food insecurity",
+                               "Moderately high obesity and food insecurity",
+                               "Moderate obesity and food insecurity",
+                               "Moderate obesity, low food insecurity",
+                               "Very low obesity and food insecurity")) +
+  labs(title = "Distribution of Obesity and Food Insecurity in US Counties",
+    subtitle = "“Peer groups” are based on counties’ food insecurity and obesity levels, related risk factors, and background characteristics.") +
+  theme_void()
+
+m_int <- ggplotly(m, tooltip = "text") |>
+  style(
+    hoveron = "fills", 
+    line.color = toRGB("black"),
+    line.width = 0.3,
+    traces = seq.int(2, 3145)) |>
+  hide_legend()
+
+m_int
+```
+
+
+### Moderation Analysis
+
+A set of simple moderation analyses were conducted to investigate the moderating effects of people of color, less than college education, median income, and rural population on the relationship between food insecurity and obesity. 
+
+#### People of Color
+
+The interaction term (0.0046) indicates that the interaction effect increases the impact of food insecurity on obesity as the rates of people of color in a population increase. It is a statistically significant and positive moderator. The R-squared value indicates that 21.87% of obesity is explained by this model.
+
+Populations with higher rates of people of color start with lower obesity rates when there is no food insecurity. However, as food insecurity increases, they experience a steeper rise in obesity. Conversely, whiter populations start off with a higher obesity rate when there is no food insecurity, but the slope is weaker. All the different levels end up crossing at a certain point before diverging in different directions again, which can be confusing. 
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(readxl)
+library(openxlsx)
+library(usmap)
+library(interactions)
+library(dplyr)
+
+# loading in data
+final_data <- read_excel("final_data.xlsx")
+
+# filter data to moderation interest
+dat <- final_data |> 
+  select(obesity_rate, food_insecurity_rate, people_color)
+
+# fot the moderated multiple regression model 
+model <- lm(obesity_rate ~ food_insecurity_rate * people_color, dat)
+summary_model <- summary(model)
+
+# Extracting only the coefficients section
+summary_model
+
+# visual
+interactions::interact_plot(model, pred = food_insecurity_rate, modx = people_color)
+```
+
+#### Less than College Education
+
+The interaction term (0.0052) indicates that the interaction effect increases the impact of food insecurity on obesity as less college education increases. It is a statistically significant and positive moderator. The R-squared value indicates that 41.98% of obesity is explained by this model.
+
+More educated populations start with lower obesity rates when there is no food insecurity and have a weaker slope as food insecurity increases. Less educated populations start with higher obesity rates when there is no food insecurity, and as food insecurity increases, the slope becomes steeper
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# filter data to moderation interest
+dat <- final_data |> 
+  select(obesity_rate, food_insecurity_rate, college_less)
+
+# note:  this is percent of people of color in that county
+
+# Descriptive statistics
+summary(dat)
+
+# Correlations
+correlations <- cor(dat)
+print(correlations)
+
+# fot the moderated multiple regression model 
+model <- lm(obesity_rate ~ food_insecurity_rate * college_less, dat)
+summary(model)
+
+# visual
+interactions::interact_plot(model, pred = food_insecurity_rate, modx = college_less)
+```
+
+#### Median Income
+
+The interaction term (-9.888e-06) indicates that the interaction effect decreases the impact of food insecurity on obesity as median income increases. This interaction term is a statistically significant and negative moderator. The model explains 29.26% of the variance in obesity.
+
+Populations with high income show nearly no interaction between food insecurity and obesity. As populations become poorer, the relationship between obesity and food insecurity becomes much stronger.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# filter data to moderation interest
+dat <- final_data |> 
+  select(obesity_rate, food_insecurity_rate, median_income)
+
+# note:  this is percent of people of color in that county
+
+# Descriptive statistics
+summary(dat)
+
+# Correlations
+correlations <- cor(dat)
+print(correlations)
+
+# fot the moderated multiple regression model 
+model <- lm(obesity_rate ~ food_insecurity_rate * median_income, dat)
+summary(model)
+
+# visual
+interactions::interact_plot(model, pred = food_insecurity_rate, modx = median_income)
+```
+
+#### Rural Population
+
+The interaction term indicates that rural population is not a statistically significant moderator. In other words, changes in rural population levels do not change the interaction between food insecurity and obesity. However, the analysis reveals that rural population has a significant independent effect on obesity (p = 5.48e-08), indicating that changes in rural population levels are associated with an increase in obesity rates.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# filter data to moderation interest
+dat <- final_data |> 
+  select(obesity_rate, food_insecurity_rate, rural_population)
+
+# note:  this is percent of people of color in that county
+
+# Descriptive statistics
+summary(dat)
+
+# Correlations
+correlations <- cor(dat)
+print(correlations)
+
+# fot the moderated multiple regression model 
+model <- lm(obesity_rate ~ food_insecurity_rate * rural_population, dat)
+summary(model)
+
+# visual
+interactions::interact_plot(model, pred = food_insecurity_rate, modx = rural_population)
+```
+
+## Discussion
+
+### Correlation between food insecurity and obesity
+
+Though it may seem paradoxical at first glance, the correlation between food insecurity and obesity makes sense when we consider a few key factors. The modern food landscape, shaped by industrial processing, floods markets with inexpensive, energy-dense yet nutrient-poor options, disproportionately impacting low-income individuals who often lack access to healthier alternatives (Frongillo & Bernal, 2014; Drewnowski & Specter, 2004). Economic struggles for food-insecure families worsen the situation by compelling reliance on calorie-dense, budget-friendly options abundant in sugars, fats, and additives, thereby contributing to weight gain and obesity.
+
+Economic factors play a big role here. Studies by Cristofar and Basiotis (1992) confirm that households with diminishing incomes prioritize cost-effective foods to maintain energy intake. The affordability of energy-dense options, laden with fats and sugars, leads to overconsumption among food-insecure individuals. This economic necessity drives the preference for cheaper, calorie-dense foods, potentially escalating total energy intake over time. Furthermore, taste preferences for sugar and fat significantly influence dietary choices, with repeated exposure to unhealthy options reinforcing poor eating habits (Drewnowski & Specter, 2004).
+
+Moreover, food insecurity often induces chronic stress, prompting maladaptive coping mechanisms like overeating or binge eating. Individuals may seek solace or distraction from economic hardships through food, leading to gradual weight gain. Additionally, the scarcity of food associated with insecurity can strengthen associations between food and reward, intensifying cravings and consumption, perpetuating a cycle of unhealthy behaviors and obesity (Frongillo & Bernal, 2014).
+
+### Cluster analysis groups interpretations 
+
+Counties in cluster 1 have the most severe levels of food insecurity and obesity. These areas are marked by profound poverty, predominantly inhabited by people of color, and characterized by lower educational attainment. The economic strain significantly restricts access to fresh, nutritious foods, forcing residents to rely on inexpensive, calorie-dense options high in sugars, fats, and additives. This reliance contributes to weight gain and obesity (Frongillo & Bernal, 2014). Moreover, racial disparities and systemic inequalities likely worsen food insecurity and obesity in these communities. Studies show that minority populations, particularly Black and Hispanic/Latinx groups, face higher rates of food insecurity and obesity due to systemic racism and inequitable access to resources (Franklin et al., 2011; Urban Institute Report).
+
+Counties in cluster 2 have moderately high levels of food insecurity and obesity. They are characterized by being economically disadvantaged, having an older population, a higher prevalence of disability, and being predominantly rural with a white population. Economic struggles and limited access to healthcare and healthy food options may contribute to these moderate levels of food insecurity and obesity in these predominantly rural counties. Older populations and a higher prevalence of disability may also impact residents' ability to access and afford healthy food choices, contributing to obesity (Franklin et al., 2011). Additionally, geographic and economic constraints in rural areas often steer populations towards energy-dense, low-cost foods, increasing susceptibility to obesity (Drewnowski & Specter, 2004).
+
+Counties in cluster 3 have very low levels of food insecurity and obesity. They are characterized by being very rich, urban, educated, and having a younger population. Counties in this cluster benefit from better access to economic resources, education, healthcare, and healthier food options, which contribute to lower levels of food insecurity and obesity. High income levels, urban environments, and a well-educated population likely promote healthier dietary habits and lifestyles, leading to lower obesity rates (Franklin et al., 2011; Burns, 2004).
+
+Counties in cluster 4 have low levels of food insecurity but moderate levels of obesity. They are characterized by being economically comfortable, less urban, and having a predominantly white population. Despite lower levels of food insecurity, dietary habits, lifestyle choices, and possibly cultural factors may contribute to moderate levels of obesity in these areas. Economic comfort and access to a predominantly white population may influence residents' food choices and lifestyle behaviors, potentially leading to higher obesity rates (Franklin et al., 2011). 
+
+Counties in cluster 5 have moderate levels of both food insecurity and obesity. They are characterized by being urban and middle-class. In urban, middle-class areas, access to healthy food options, economic stability, and lifestyle choices likely influence moderate levels of both food insecurity and obesity. Factors such as food availability, affordability, and cultural preferences may impact residents' dietary habits and contribute to the observed levels of food insecurity and obesity (Franklin et al., 2011).
+
+### Significant moderators
+
+Our analysis reveals that the impact of food insecurity on obesity varies among different racial/ethnic groups, with a significant interaction suggesting an amplification of this effect as the proportion of people of color in a population increases, consistent with existing literature indicating an uneven distribution of food insecurity and obesity across racial and ethnic lines. Studies such as Franklin et al. (2011) have shown higher rates of food insecurity and obesity among non-Hispanic white and Hispanic groups compared to non-Hispanic blacks, while Drewnowski and Specter (2004) noted elevated rates of obesity and overweight among minority populations, excluding Asian Americans. The Urban Institute Report (Waidmann et al., 2022) further confirms higher obesity rates among Black, Hispanic/Latinx, Native American, Alaska Native, and Pacific Islander communities compared to white and Asian adults. Additionally, the stress associated with economic hardship and social disadvantage, as outlined by Frongillo and Bernal (2014), often leads minority groups to resort to energy-dense comfort foods as coping mechanisms, with examples like low-income urban Minnesota women exhibiting unhealthy eating behaviors due to stress and economic hardship. Structural factors, including systemic racism and inequitable resource access, are critical in perpetuating these disparities, with links to structural racism impacting healthy food access, healthcare, and other essential resources.
+
+The results of our moderation analysis suggest that education level plays a significant role in the relationship between food insecurity and obesity. Specifically, individuals with less than a college education exhibit a stronger interaction effect, indicating that as food insecurity increases, the impact on obesity becomes more pronounced for this group.This finding aligns with previous research by Franklin et al. (2011), who discovered that individuals with lower education levels are not only more likely to experience food insecurity but also have a higher prevalence of obesity. This relationship can be attributed to several factors elucidated by Burns (2004). First, individuals with lower education levels often have limited health literacy, which can impair their ability to make informed dietary decisions. Second, education influences dietary behaviors and health awareness, with individuals of higher education levels generally exhibiting healthier behaviors, such as better diet quality and increased physical activity.
+
+Moreover, Drewnowski and Specter (2004) found that higher educational attainment is associated with better diet quality and higher Healthy Eating Index (HEI) scores. This implies that individuals with higher education levels may have a better understanding of nutrition and access to resources that enable them to make healthier food choices, thereby mitigating the impact of food insecurity on obesity. In contrast, individuals with lower education levels face greater challenges in accessing nutritious food and adopting healthy behaviors, making them more vulnerable to the adverse effects of food insecurity on obesity. Consequently, education emerges as a crucial variable to consider when addressing the complex interplay between food insecurity and obesity, as it not only influences dietary behaviors but also shapes individuals' ability to navigate and mitigate the health risks associated with food insecurity.
+
+The results of our moderation analysis, indicating a decreasing impact of food insecurity on obesity as median income increases, align with the broader understanding of the relationship between income levels, food insecurity, and obesity. Income levels are consistently highlighted as a crucial variable in discussions surrounding food insecurity and obesity. Franklin et al. (2011) emphasize the important role of income in moderating this relationship, revealing that low-income households face a heightened risk of food insecurity, consequently contributing to a higher prevalence of obesity within these communities. Drewnowski & Specter (2004) explain how economic disparities significantly impact diet quality. Their research demonstrates that higher incomes correlate with better diet quality and higher Healthy Eating Index (HEI) scores, while lower incomes are associated with poorer diets characterized by energy-dense, nutrient-poor foods. This economic framework sheds light on how financial constraints shape food choices, often steering individuals towards cheaper, calorie-dense options and thereby contributing to obesity—an observation consistent with earlier sections of the report. Furthermore, Burns (2004) underscores the socioeconomic gradient of obesity, emphasizing the heightened risk faced by individuals from the lowest income brackets. This highlights the challenges encountered by lower-income individuals in accessing healthy foods and adopting healthy lifestyle behaviors, reflecting the intricate relationship between economic hardship, food insecurity, and obesity.
+
+Despite the analysis indicating that the rural population is not a statistically significant moderator of the interaction between food insecurity and obesity, it does reveal a significant independent effect of the rural population on obesity rates. This suggests that changes in rural population levels are associated with an increase in obesity rates, independent of their influence on the interaction between food insecurity and obesity. This finding is consistent with existing research highlighting the significant impact of geographic conditions, particularly rural environments, on the relationship between food insecurity and obesity. Studies like that of Franklin et al. (2011) have shown substantial links between food insecurity and elevated obesity rates in rural areas, where limited access to nutritious foods due to geographic and economic constraints often contributes to unhealthy dietary habits. Additionally, Trivedi et al. (2015) have demonstrated significant disparities in obesity prevalence between rural and urban populations, with rural residents exhibiting higher rates of obesity, emphasizing the unique challenges faced by rural communities in accessing healthy foods and opportunities for physical activity. Therefore, while the rural population may not directly moderate the interaction between food insecurity and obesity, its independent effect on obesity rates underscores the complex interplay of geographic and socioeconomic factors in shaping health outcomes.
+
+## GitHub Repository
+
+Click [here](https://github.com/nikayermakova/food-insecurity-and-obesity) to view our GitHub repository and code!
