@@ -68,8 +68,6 @@ The World Health Organization defines obesity as a chronic complex disease chara
 
 As mentioned previously, we wanted to expand upon the Urban Institute Report. We will be doing so through three main objectives. First, we aim to determine if there is a correlation between food insecurity and obesity. Second, we will conduct a k-means cluster analysis that integrates obesity and food insecurity data with socioeconomic, health, and demographic variables to detect emerging patterns. Third, we will perform a set of moderation analyses to identify if variables such as race, education, income, and geographic location (urban vs. rural areas) moderate the relationship between food insecurity and obesity. Ultimately, we seek to paint a clearer picture of how food insecurity and obesity are intertwined and identify strategies to break this cycle.
 
-We predict a positive and statistically significant correlation between food insecurity and obesity rates. Regarding the cluster analysis, we expect greater food insecurity and obesity vulnerability in more rural areas, as well as in areas with a higher population of people of color, lower education levels, and lower income. Furthermore, we predict that the moderation analysis will indicate that income levels, race, education, and geographic location will all play a statistically significant role in moderating the relationship between food insecurity and obesity.
-
 ## Methods and Datasets
 
 ### [Food Insecurity Data](https://apps.urban.org/features/disrupting-food-insecurity/index.html) 
